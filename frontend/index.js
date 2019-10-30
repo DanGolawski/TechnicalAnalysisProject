@@ -1,12 +1,13 @@
 window.onload = function () {
 
+    let a = 2;
+
     fetch("http://localhost:8080/highestPrices").then(resp => resp.json()).then(resp => {
         this.console.log(resp);
         list = [];
         for (i = 0; i < 200; i++) {
             list.push((Math.random() * 10) + 1);
         }
-
 
 
         var limit = 2000;

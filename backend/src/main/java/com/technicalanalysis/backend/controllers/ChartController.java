@@ -14,18 +14,24 @@ public class ChartController {
 
     private HistoricalDataService historicalDataService;
     private ResponseArrayConverter responseArrayConverter;
-    private JSONArray array;
+    private ArrayList<MarketDay> array;
+    private ArrayList<Float> highestPrices;
 
     public ChartController(){
         historicalDataService = new HistoricalDataService();
         responseArrayConverter = new ResponseArrayConverter();
+        highestPrices = new ArrayList<>();
     }
 
     @RequestMapping(value = "/chartdata")
-    public ArrayList<MarketDay> getChartData(){
+    public ArrayList<Float> getChartData(){
 
-        array = historicalDataService.getHistoricalData();
-
-        return responseArrayConverter.convertJsonArrayToArray(array);
+        array = responseArrayConverter.convertJsonArrayToArray(historicalDataService.getHistoricalData());
+        highestPrices.clear();
+        for(MarketDay marketDay: array){
+            highestPrices.add(marketDay.getHigh());
+        }
+        System.out.println(highestPrices);
+        return highestPrices;
     }
 }

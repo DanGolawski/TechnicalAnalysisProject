@@ -1,61 +1,82 @@
-// http://localhost:8080/chartdata
-window.onload = function() {
-    
-    // fetch("http://localhost:8080/chartdata")
-    // .then(resp => resp.json())
-    // .then(resp => {
-    //     this.console.log(resp);
-    //     list = [];
-    //     for(i=0; i<200; i++){
-    //         list.push((Math.random() * 10) + 1);
-    //     }
-    //     const myChart = new Chart(document.getElementById("myChart"), {
-    //         type: 'line',
-    //         data: {
-    //           labels: [1500,1600,1700,1750,1800,1850,1900,1950,1999,2050],
-    //           datasets: [{ 
-    //               data: list,
-    //               label: "Africa",
-    //               borderColor: "#3e95cd",
-    //               fill: false
-    //             }
-    //           ]
-    //         },
-    //         options: {
-    //           title: {
-    //             display: true,
-    //             text: 'World population per region (in millions)'
-    //           }
-    //         }
-    //       });
-    // })
-    list = [];
-    list2 = [];
-        for(i=0; i<2000; i++){
-            list2.push(i)
+window.onload = function () {
+
+    fetch("http://localhost:8080/highestPrices").then(resp => resp.json()).then(resp => {
+        this.console.log(resp);
+        list = [];
+        for (i = 0; i < 200; i++) {
             list.push((Math.random() * 10) + 1);
         }
-        const myChart = new Chart(document.getElementById("myChart"), {
-            type: 'line',
-            data: {
-                labels: list2,
-              datasets: [{ 
-                  data: list,
-                  label: "Africa",
-                  borderColor: "#3e95cd",
-                  fill: false
-                }
-              ]
-            },
-            options: {
-              title: {
-                display: true,
-                text: 'World population per region (in millions)'
-              }
-            }
-          });
-        
-    
 
-      
-};
+
+
+        var limit = 2000;
+        var y = 100;
+
+        var data = [];
+        let data2 = [];
+
+        let dataSeries = {};
+        let dataSeries2 = {};
+
+        var dataPoints = [];
+        let dataPoints2 = [];
+
+        for (var i = 0; i < resp.length; i += 1) {
+            y += Math.round(Math.random() * 10 - 5);
+            dataPoints.push({
+                x: i,
+                y: resp[i].y
+            });
+            dataPoints2.push({
+                x: i,
+                y: y
+            })
+        }
+
+        dataSeries.type = 'line';
+        dataSeries2.type = 'line';
+
+        dataSeries.dataPoints = dataPoints;
+        dataSeries.dataPoints2 = dataPoints2;
+
+        data.push(dataSeries);
+        data2.push(dataSeries2);
+
+        //Better to construct options first and then pass it as a parameter
+        var options = {
+            zoomEnabled: true,
+            animationEnabled: true,
+            title: {
+                text: "Try Zooming - Panning"
+            },
+            axisY: {
+                includeZero: false,
+                lineThickness: 1
+            },
+            data: [
+                {
+                    type: "line",
+                    dataPoints: dataPoints
+                },
+                {
+                    type: "line",
+                    dataPoints: dataPoints2
+                },
+            ]
+        };
+
+
+
+
+
+
+        var chart = new CanvasJS.Chart("chartContainer", options);
+        var startTime = new Date();
+        chart.render();
+        var endTime = new Date();
+        // document.getElementById("timeToRender").innerHTML = "Time to Render: " + (endTime - startTime) + "ms";
+    })
+
+
+
+}

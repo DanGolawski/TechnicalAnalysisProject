@@ -3,8 +3,17 @@ html, body{
     height: 100%;
 }
 
-#mainContainer{
-    width: 100%;
-    min-height: 100%;
-    overflow-x: scroll;
+#chartContainer{
+    width: 300%;
+    height: 100%;
+}
+
+#timeToRender {
+    position:absolute; 
+    top: 10px; 
+    font-size: 20px; 
+    font-weight: bold; 
+    background-color: #d85757;
+    padding: 0px 4px;
+    color: #ffffff;
 }

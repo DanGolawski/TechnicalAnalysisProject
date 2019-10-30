@@ -29,7 +29,7 @@ public class HistoricalDataService {
         marketDayList = new ArrayList<>();
         objectMapper = new ObjectMapper();
         httpClient = HttpClientBuilder.create().build();
-        httpGet = new HttpGet("https://min-api.cryptocompare.com/data/v2/histoday?fsym=BTC&tsym=USD&limit=2000&aggregate=1&e=CCCAGG&api_key=36c4b7b0b3c5ef112e707419205a12e8d1a7f85fb5d87b6b23df0413986bfdfe");
+        httpGet = new HttpGet("https://min-api.cryptocompare.com/data/v2/histoday?fsym=BTC&tsym=USD&limit=1000&aggregate=1&e=CCCAGG&api_key=36c4b7b0b3c5ef112e707419205a12e8d1a7f85fb5d87b6b23df0413986bfdfe");
 
     }
 

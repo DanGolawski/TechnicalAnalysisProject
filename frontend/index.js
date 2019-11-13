@@ -2,9 +2,42 @@ window.onload = function () {
 
     let dataSets = []
 
+    getSupportResistanceLevels('resistance');
+
+    getSupportResistanceLevels('support')
+
     getPrices('highestPrices');
 
-    getPrices('leastSquares')
+    getPrices('leastSquareHigh');
+
+    getPrices('leastSquareLow');
+
+    getPrices('lowestPrices');
+
+   
+    
+
+    function getSupportResistanceLevels(endpoint){
+        fetch(`http://localhost:8080/${endpoint}`).then(resp => resp.json()).then(resp => {
+            // var dataPoints = [];
+
+            for (var i = 0; i < resp.length; i += 1) {
+                dataPoints = [];
+                for(let j=0; j<1000; j+=1){
+                    dataPoints.push({
+                        x: j,
+                        y: resp[i]
+                    });
+                }
+                dataSets.push({ type: "line", dataPoints: dataPoints });
+                // drawChart(dataSets);
+
+            }
+            drawChart(dataSets)
+
+            
+        })
+    }
 
     function getPrices(endpoint) {
         fetch(`http://localhost:8080/${endpoint}`).then(resp => resp.json()).then(resp => {

@@ -2,15 +2,15 @@ package com.technicalanalysis.backend.models;
 
 public class MarketDay {
 
-    public float high;
-    public float low;
-    public String convertionSymbol;
-    public float volumeto;
-    public float volumefrom;
-    public int time;
-    public String convertionType;
-    public float close;
-    public float open;
+    private float high;
+    private float low;
+    private String convertionSymbol;
+    private float volumeto;
+    private float volumefrom;
+    private long time;
+    private String convertionType;
+    private float close;
+    private float open;
 
 
 //    SETTERS   //
@@ -34,7 +34,7 @@ public class MarketDay {
         this.volumefrom = volumefrom;
     }
 
-    public void setTime(int time) {
+    public void setTime(long time) {
         this.time = time;
     }
 
@@ -49,6 +49,8 @@ public class MarketDay {
     public void setOpen(float open) {
         this.open = open;
     }
+
+
 
 //    GETTERS   //
     public float getHigh() {
@@ -71,7 +73,7 @@ public class MarketDay {
         return volumefrom;
     }
 
-    public int getTime() {
+    public long getTime() {
         return time;
     }
 

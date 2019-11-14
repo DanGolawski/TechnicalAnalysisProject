@@ -2,17 +2,17 @@ window.onload = function () {
 
     let dataSets = []
 
-    getSupportResistanceLevels('resistance');
+    // getSupportResistanceLevels('resistance');
 
-    getSupportResistanceLevels('support')
+    // getSupportResistanceLevels('support')
 
     getPrices('highestPrices');
 
     getPrices('leastSquareHigh');
 
-    getPrices('leastSquareLow');
+    // getPrices('leastSquareLow');
 
-    getPrices('lowestPrices');
+    // getPrices('lowestPrices');
 
    
     

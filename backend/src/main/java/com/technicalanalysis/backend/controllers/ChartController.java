@@ -1,68 +1,47 @@
 package com.technicalanalysis.backend.controllers;
 
+import com.technicalanalysis.backend.chartServices.PricesService;
 import com.technicalanalysis.backend.models.MarketDay;
 import com.technicalanalysis.backend.models.XYobject;
-import com.technicalanalysis.backend.services.HistoricalDataService;
+import com.technicalanalysis.backend.chartServices.MarketDataService;
 import com.technicalanalysis.backend.services.LeastSquaresCalculator;
-import com.technicalanalysis.backend.services.ResponseArrayConverter;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 
 @RestController
 public class ChartController {
 
-    private HistoricalDataService historicalDataService;
-    private ResponseArrayConverter responseArrayConverter;
-    private ArrayList<MarketDay> array;
+    private MarketDataService marketDataService;
+    private ArrayList<MarketDay> marketDaysArray;
+    private PricesService pricesService;
 
+    /**
+     * object initialization, getting and extracting data
+     */
     public ChartController(){
-        historicalDataService = new HistoricalDataService();
-        responseArrayConverter = new ResponseArrayConverter();
-        array = responseArrayConverter.convertJsonArrayToArray(historicalDataService.getHistoricalData());
-    }
-
-    @RequestMapping(value = "/chartdata")
-    public ArrayList<MarketDay> getChartData(){
-
-        return responseArrayConverter.convertJsonArrayToArray(historicalDataService.getHistoricalData());
-
-
+        marketDataService = new MarketDataService();
+        marketDaysArray = marketDataService.getHistoricalData();
+        pricesService = new PricesService(marketDaysArray);
     }
 
     /**
-     * Ta metoda zwraca najwyzsze ceny per dzien
-     * @return
+     * This method returns the highest prices per the day
+     * @return array of objects X-date, Y-price
      */
     @RequestMapping(value = "/highestPrices")
-    public ArrayList<XYobject> getHighestPrices(){
-        ArrayList<XYobject> highestPrices = new ArrayList<>();
-//        arrayy = responseArrayConverter.convertJsonArrayToArray(historicalDataService.getHistoricalData());
-        for(MarketDay marketDay: array){
-            // TODO zrobic konwertowanie czasu na date
-            highestPrices.add(new XYobject("Data X", marketDay.getHigh()));
-        }
-        System.out.println(highestPrices);
-        return highestPrices;
+    private ArrayList<XYobject> getHighestPrices(){
+        return pricesService.getHighestPrices();
     }
 
     /**
-     * ta metoda zwraca najmniejsze ceny per dzien
-     * @return
+     * This method returns the lowest prices per the day
+     * @return array of objects X-date, Y-price
      */
     @RequestMapping(value = "/lowestPrices")
-    public ArrayList<XYobject> getLowestPrices(){
-        ArrayList<XYobject> lowestPrices = new ArrayList<>();
-//        arrayy = responseArrayConverter.convertJsonArrayToArray(historicalDataService.getHistoricalData());
-        for(MarketDay marketDay: array){
-            // TODO zrobic konwertowanie czasu na date
-            lowestPrices.add(new XYobject("Data X", marketDay.getLow()));
-        }
-        System.out.println(lowestPrices);
-        return lowestPrices;
+    private ArrayList<XYobject> getLowestPrices(){
+        return pricesService.getLowestPrices();
     }
 
 
@@ -80,14 +59,14 @@ public class ChartController {
      * @return
      */
     @RequestMapping(value = "/leastSquareHigh")
-    public ArrayList<XYobject> getPeaks(){
+    private ArrayList<XYobject> getPeaks(){
         ArrayList<Float> points = new ArrayList<>();
         ArrayList<XYobject> data = new ArrayList<>();
         int k = 8; // nearest neighbours number
         k = k / 2;
         for(int i=0; i<k*1.5;i++){data.add(new XYobject("Data XX", (float) 0.0));}
         LeastSquaresCalculator leastSquaresCalculator = new LeastSquaresCalculator();
-        for(MarketDay md : array){
+        for(MarketDay md : marketDaysArray){
             points.add(md.getHigh());
         }
         for(int i=k; i<points.size()-k; i++){
@@ -143,7 +122,7 @@ public class ChartController {
         k = k / 2;
         for(int i=0; i<k*1.5;i++){data.add(new XYobject("Data XX", (float) 0.0));}
         LeastSquaresCalculator leastSquaresCalculator = new LeastSquaresCalculator();
-        for(MarketDay md : array){
+        for(MarketDay md : marketDaysArray){
             points.add(md.getLow());
         }
         for(int i=k; i<points.size()-k; i++){

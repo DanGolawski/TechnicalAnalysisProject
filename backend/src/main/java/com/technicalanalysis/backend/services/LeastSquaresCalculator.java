@@ -4,16 +4,7 @@ import java.util.ArrayList;
 
 public class LeastSquaresCalculator {
 
-    public float calculate(int x1, float y1, int x2, float y2, int x3, float y3){
-        float meanY = (y1 + y2 + y3) / (float) 3.0;
-        float numerator = (x1 - x2)*(y1-meanY) + (x3 - x2)*(y3 - meanY);
-        float denominator = (float) (Math.pow((x1-x2), 2) + Math.pow((x3-x2), 2));
-        float a = numerator / denominator;
-        float b = meanY - a * x2;
-        return a*x2 + b;
-    }
-
-    public float calculate2(ArrayList<Integer> x, ArrayList<Float> y){
+    public float calculate(ArrayList<Integer> x, ArrayList<Float> y){
         float meanX = 0;
         float meanY = 0;
         for(int i=0; i<x.size(); i++){

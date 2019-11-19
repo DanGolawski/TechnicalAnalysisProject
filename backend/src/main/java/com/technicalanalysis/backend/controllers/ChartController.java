@@ -2,6 +2,7 @@ package com.technicalanalysis.backend.controllers;
 
 import com.technicalanalysis.backend.chartServices.LeastSquareService;
 import com.technicalanalysis.backend.chartServices.PricesService;
+import com.technicalanalysis.backend.chartServices.ResistanceLevelsService;
 import com.technicalanalysis.backend.models.MarketDay;
 import com.technicalanalysis.backend.models.XYobject;
 import com.technicalanalysis.backend.chartServices.MarketDataService;
@@ -15,12 +16,17 @@ import java.util.ArrayList;
 public class ChartController {
 
     private MarketDataService marketDataService;
+    // the service that gets highest and lowest prices
     private PricesService pricesService;
+    // the service that gets least squares of highest and lowest prices
     private LeastSquareService leastSquareService;
-
     private ArrayList<MarketDay> marketDaysArray;
-    private ArrayList<XYobject> theHighestPrices;
-    private ArrayList<XYobject> theLowestPrices;
+    // the list of highest prices per day
+    private ArrayList<XYobject> highestPrices;
+    // the list of lowest prices per day
+    private ArrayList<XYobject> lowestPrices;
+    // the list of least squares of highest prices
+    private ArrayList<Float> leastSquaresOfHighestPrices;
 
     /**
      * object initialization, getting and extracting data
@@ -30,14 +36,16 @@ public class ChartController {
         marketDaysArray = marketDataService.getHistoricalData();
         pricesService = new PricesService(marketDaysArray);
         leastSquareService = new LeastSquareService();
-        theHighestPrices = new ArrayList<>();
-        theLowestPrices = new ArrayList<>();
+        highestPrices = new ArrayList<>();
+        lowestPrices = new ArrayList<>();
+        leastSquaresOfHighestPrices = new ArrayList<>();
         getAllTheData();
     }
 
     private void getAllTheData(){
-        theHighestPrices = pricesService.getHighestPrices();
-        theLowestPrices = pricesService.getLowestPrices();
+        highestPrices = pricesService.getHighestPrices();
+        lowestPrices = pricesService.getLowestPrices();
+        leastSquaresOfHighestPrices =
     }
 
     /**
@@ -46,8 +54,7 @@ public class ChartController {
      */
     @RequestMapping(value = "/highestPrices")
     private ArrayList<XYobject> getHighestPrices(){
-        System.out.println("getHighestPrices");
-        return theHighestPrices;
+        return highestPrices;
     }
 
     /**
@@ -56,198 +63,117 @@ public class ChartController {
      */
     @RequestMapping(value = "/lowestPrices")
     private ArrayList<XYobject> getLowestPrices(){
-        System.out.println("getLowestPrices");
-        return theLowestPrices;
+        return lowestPrices;
     }
 
 
-
-
-
-
-
-
-
-
-
     /**
-     * metoda wyznacza punkty przez metode najmniejszych kwadratow aby zlagodzic outliery
-     * @return
+     * this method calculates least squares of the highest prices values (3 times to eliminate undesirable peaks)
+     * @return the array of squared values
      */
     @RequestMapping(value = "/leastSquareHigh")
     private ArrayList<XYobject> getPeaks(){
-//        ArrayList<Float> points = new ArrayList<>();
-//        ArrayList<XYobject> data = new ArrayList<>();
-//        int k = 8; // nearest neighbours number
-//        k = k / 2;
-//        for(int i=0; i<k*1.5;i++){data.add(new XYobject("Data XX", (float) 0.0));}
-//        LeastSquaresCalculator leastSquaresCalculator = new LeastSquaresCalculator();
-//        for(MarketDay md : marketDaysArray){
-//            points.add(md.getHigh());
-//        }
-//        for(int i=k; i<points.size()-k; i++){
-////            data.add(new XYobject("Data XX", leastSquaresCalculator.calculate(i-1, points.get(i-1), i, points.get(i), i+1, points.get(i+1))));
-//            ArrayList<Integer> x = new ArrayList<>();
-//            ArrayList<Float> y = new ArrayList<>();
-//            for(int j=0; j<k*2+1; j++){
-//                x.add(i-k+j);
-//                y.add(points.get(i-k+j));
-//            }
-//            data.add(new XYobject("Data XX", leastSquaresCalculator.calculate2(x, y)));
-//        }
-////        for(int i=0; i<k;i++){data.add(new XYobject("Data XX", (float) 0.0));}
-//        System.out.println("LEAST SQUARES : " + data);
-//        return calculateLeastSquares(calculateLeastSquares(data));
-        return calculateLeastSquares(calculateLeastSquares(leastSquareService.getLeastSquares(theHighestPrices)));
-    }
-
-
-    /**
-     * metoda wylicza linie metoda najmniejszych kwadratow
-     * @param objectArray
-     * @return
-     */
-    private ArrayList<XYobject> calculateLeastSquares(ArrayList<XYobject> objectArray){
-        LeastSquaresCalculator leastSquaresCalculator = new LeastSquaresCalculator();
-        ArrayList<XYobject> array = new ArrayList<>();
-        int k = 30;
-        for(int i=0; i<k; i++){
-            array.add(objectArray.get(i));
-        }
-        for(int i=k; i<objectArray.size()-k; i++){
-            ArrayList<Integer> x = new ArrayList<>();
-            ArrayList<Float> y = new ArrayList<>();
-            for(int j=0; j<k*2+1; j++){
-                x.add(i-k+j);
-                y.add(objectArray.get(i-k+j).getY());
-            }
-            array.add(new XYobject("Data XX", leastSquaresCalculator.calculate(x, y)));
-        }
-
-        return array;
+        return leastSquareService.getLeastSquares(leastSquareService.getLeastSquares(leastSquareService.getLeastSquares(highestPrices,30),60),60);
     }
 
     /**
-     * metoda wyznacza punkty przez metode najmniejszych kwadratow aby zlagodzic outliery
-     * @return
+     * this method calculates least squares of the lowest prices values (3 times to eliminate undesirable holes)
+     * @return the array of squared values
      */
     @RequestMapping(value = "/leastSquareLow")
     public ArrayList<XYobject> getHoles(){
-        ArrayList<Float> points = new ArrayList<>();
-        ArrayList<XYobject> data = new ArrayList<>();
-        int k = 8; // nearest neighbours number
-        k = k / 2;
-        for(int i=0; i<k*1.5;i++){data.add(new XYobject("Data XX", (float) 0.0));}
-        LeastSquaresCalculator leastSquaresCalculator = new LeastSquaresCalculator();
-        for(MarketDay md : marketDaysArray){
-            points.add(md.getLow());
-        }
-        for(int i=k; i<points.size()-k; i++){
-//            data.add(new XYobject("Data XX", leastSquaresCalculator.calculate(i-1, points.get(i-1), i, points.get(i), i+1, points.get(i+1))));
-            ArrayList<Integer> x = new ArrayList<>();
-            ArrayList<Float> y = new ArrayList<>();
-            for(int j=0; j<k*2+1; j++){
-                x.add(i-k+j);
-                y.add(points.get(i-k+j));
-            }
-            data.add(new XYobject("Data XX", leastSquaresCalculator.calculate(x, y)));
-        }
-//        for(int i=0; i<k;i++){data.add(new XYobject("Data XX", (float) 0.0));}
-        System.out.println("LEAST SQUARES : " + data);
-        return calculateLeastSquares(calculateLeastSquares(data));
+        return leastSquareService.getLeastSquares(leastSquareService.getLeastSquares(leastSquareService.getLeastSquares(lowestPrices,30),60),60);
     }
+
+
+    @RequestMapping(value = "/resistance")
+    public ArrayList<Float> getResistanceLevels() {
+        ResistanceLevelsService resistanceLevelsService = new ResistanceLevelsService();
+        // TODO niekompatybilne typy float i XYobject
+        resistanceLevelsService.getLevels(highestPrices, );
+    }
+
+
+
 
 
     /**
      * ta metoda wyznacza poziomy wsparcia i oporu
      */
-    @RequestMapping(value = "/resistance")
-    public ArrayList<Float> getResistanceLevels(){
-        // lista na podstawie wykresu najmniejszych kwadratow
-        ArrayList<XYobject> squares = getPeaks();
-        // lista punktow poziomu oporu
-        ArrayList<Float> peaks = new ArrayList<>();
-        // lista najwyzszych cen per dzien
-        ArrayList<XYobject> prices = getHighestPrices();
-        // lista szczytow na wykresie cen
-        ArrayList<Float> peaksPrices = new ArrayList<>();
-        // filtruje punkty ktore sa pikami wykresu najmniejszych kwadratow
-
-        for(int i=3; i<squares.size()-3; i++){
-            // POZIOMY OPORU
-            if(squares.get(i-3).getY() < squares.get(i-2).getY() && squares.get(i-2).getY() < squares.get(i-1).getY() && squares.get(i-1).getY() < squares.get(i).getY() && squares.get(i).getY() > squares.get(i+1).getY() && squares.get(i+1).getY() > squares.get(i+2).getY() && squares.get(i+2).getY() > squares.get(i+3).getY()){
-//                peaks.add(squares.get(i-1).getY());
-                float x = 0;
-                if(i >= 40) {
-                    for (int j = -40; j < 40; j++) {
-                        if (prices.get(i + j).getY() > x) {
-                            x = prices.get(i + j).getY();
-                        }
-                    }
-                }
-                System.out.println(squares.get(i-3).getY() + "   " + squares.get(i-2).getY() + "   " + squares.get(i-1).getY() + "   --- " + squares.get(i).getY() + " ---   " + squares.get(i+1).getY() + "   " + squares.get(i+2).getY() + "   " + squares.get(i+3).getY() + "____________________" + x);
-                peaks.add(x);
-            }
+//    @RequestMapping(value = "/resistance")
+//    public ArrayList<Float> getResistanceLevels(){
+//        ResistanceLevelsService resistanceLevelsService = new ResistanceLevelsService();
+//        resistanceLevelsService.getLevels();
+//        // lista na podstawie wykresu najmniejszych kwadratow
+//        ArrayList<XYobject> squares = getPeaks();
+//        // lista punktow poziomu oporu
+//        ArrayList<Float> peaks = new ArrayList<>();
+//        // lista najwyzszych cen per dzien
+//        ArrayList<XYobject> prices = getHighestPrices();
+//        // lista szczytow na wykresie cen
+//        ArrayList<Float> peaksPrices = new ArrayList<>();
+//        // filtruje punkty ktore sa pikami wykresu najmniejszych kwadratow
+//
+//        for(int i=3; i<squares.size()-3; i++){
+//            // POZIOMY OPORU
 //            if(squares.get(i-3).getY() < squares.get(i-2).getY() && squares.get(i-2).getY() < squares.get(i-1).getY() && squares.get(i-1).getY() < squares.get(i).getY() && squares.get(i).getY() > squares.get(i+1).getY() && squares.get(i+1).getY() > squares.get(i+2).getY() && squares.get(i+2).getY() > squares.get(i+3).getY()){
 ////                peaks.add(squares.get(i-1).getY());
-//                System.out.println(squares.get(i-3).getY() + "   " + squares.get(i-2).getY() + "   " + squares.get(i-1).getY() + "   --- " + squares.get(i).getY() + " ---   " + squares.get(i+1).getY() + "   " + squares.get(i+2).getY() + "   " + squares.get(i+3).getY());
-//
-//                peaks.add(squares.get(i).getY());
+//                float x = 0;
+//                if(i >= 40) {
+//                    for (int j = -40; j < 40; j++) {
+//                        if (prices.get(i + j).getY() > x) {
+//                            x = prices.get(i + j).getY();
+//                        }
+//                    }
+//                }
+//                System.out.println(squares.get(i-3).getY() + "   " + squares.get(i-2).getY() + "   " + squares.get(i-1).getY() + "   --- " + squares.get(i).getY() + " ---   " + squares.get(i+1).getY() + "   " + squares.get(i+2).getY() + "   " + squares.get(i+3).getY() + "____________________" + x);
+//                peaks.add(x);
 //            }
-        }
+////
+//        }
 
 
-        return peaks;
-    }
+//        return peaks;
+//    }
 
 
-    @RequestMapping(value = "/support")
-    public ArrayList<Float> getSupportLevels(){
-        // lista na podstawie wykresu najmniejszych kwadratow
-        ArrayList<XYobject> squares = getHoles();
-        // lista punktow poziomu wsparcia
-        ArrayList<Float> peaks = new ArrayList<>();
-        // lista najnizszych cen per dzien
-        ArrayList<XYobject> prices = getLowestPrices();
-        // lista szczytow na wykresie cen
-        ArrayList<Float> peaksPrices = new ArrayList<>();
-        // filtruje punkty ktore sa pikami wykresu najmniejszych kwadratow
-
-        for(int i=3; i<squares.size()-3; i++){
-//            // POZIOMY WSPARCIA
-            if(squares.get(i-3).getY() > squares.get(i-2).getY() && squares.get(i-2).getY() > squares.get(i-1).getY() && squares.get(i-1).getY() > squares.get(i).getY() && squares.get(i).getY() < squares.get(i+1).getY() && squares.get(i+1).getY() < squares.get(i+2).getY() && squares.get(i+2).getY() < squares.get(i+3).getY()){
-//                peaks.add(squares.get(i-1).getY());
-                float x = prices.get(i).getY();
-                if(i >= 10){
-                    for(int j=-10; j<10; j++){
-                        if(prices.get(i+j).getY() < x){
-                            x = prices.get(i+j).getY();
-                        }
-                    }
-                    System.out.println(squares.get(i-3).getY() + "   " + squares.get(i-2).getY() + "   " + squares.get(i-1).getY() + "   --- " + squares.get(i).getY() + " ---   " + squares.get(i+1).getY() + "   " + squares.get(i+2).getY() + "   " + squares.get(i+3).getY() + "____________________" + x);
-                    peaks.add(x);
-                }
-
-            }
+//    @RequestMapping(value = "/support")
+//    public ArrayList<Float> getSupportLevels(){
+//        // lista na podstawie wykresu najmniejszych kwadratow
+//        ArrayList<XYobject> squares = getHoles();
+//        // lista punktow poziomu wsparcia
+//        ArrayList<Float> peaks = new ArrayList<>();
+//        // lista najnizszych cen per dzien
+//        ArrayList<XYobject> prices = getLowestPrices();
+//        // lista szczytow na wykresie cen
+//        ArrayList<Float> peaksPrices = new ArrayList<>();
+//        // filtruje punkty ktore sa pikami wykresu najmniejszych kwadratow
+//
+//        for(int i=3; i<squares.size()-3; i++){
+////            // POZIOMY WSPARCIA
 //            if(squares.get(i-3).getY() > squares.get(i-2).getY() && squares.get(i-2).getY() > squares.get(i-1).getY() && squares.get(i-1).getY() > squares.get(i).getY() && squares.get(i).getY() < squares.get(i+1).getY() && squares.get(i+1).getY() < squares.get(i+2).getY() && squares.get(i+2).getY() < squares.get(i+3).getY()){
 ////                peaks.add(squares.get(i-1).getY());
-//                System.out.println(squares.get(i-3).getY() + "   " + squares.get(i-2).getY() + "   " + squares.get(i-1).getY() + "   --- " + squares.get(i).getY() + " ---   " + squares.get(i+1).getY() + "   " + squares.get(i+2).getY() + "   " + squares.get(i+3).getY());
+//                float x = prices.get(i).getY();
+//                if(i >= 10){
+//                    for(int j=-10; j<10; j++){
+//                        if(prices.get(i+j).getY() < x){
+//                            x = prices.get(i+j).getY();
+//                        }
+//                    }
+////                    System.out.println(squares.get(i-3).getY() + "   " + squares.get(i-2).getY() + "   " + squares.get(i-1).getY() + "   --- " + squares.get(i).getY() + " ---   " + squares.get(i+1).getY() + "   " + squares.get(i+2).getY() + "   " + squares.get(i+3).getY() + "____________________" + x);
+////                    peaks.add(x);
+//                }
 //
-//                peaks.add(squares.get(i).getY());
 //            }
-        }
-
-
-        return peaks;
-    }
-
-
-//    public void getSupportResistanceLevels(){
-//        ArrayList<Float> resistanceLevels = getResistanceLevels();
-//        ArrayList<Float> supportLevels = getSupportLevels();
 //
-//        for()
+//        }
+//
+//
+//        return peaks;
 //    }
+//
+
+
 
 
 }

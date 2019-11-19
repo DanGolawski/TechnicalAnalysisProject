@@ -1,14 +1,17 @@
 package com.technicalanalysis.backend.services;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-public class FifoQueue {
+/**
+ * This is the generic FIFO queue (key-value) with variable size
+ * @param <K> first type - keys
+ * @param <V> second type - values
+ */
+public class FifoQueue<K, V> {
 
-    ArrayList<Integer> keys;
-    ArrayList<Float> values;
-    int size;
+    private ArrayList<K> keys;
+    private ArrayList<V> values;
+    private int size;
 
     public FifoQueue(int size){
         this.size = size;
@@ -16,7 +19,7 @@ public class FifoQueue {
         values = new ArrayList<>();
     }
 
-    public void addElement(int x, float y){
+    public void addElement(K x, V y){
         if(keys.size() < size+1){
             keys.add(x);
             values.add(y);
@@ -29,11 +32,22 @@ public class FifoQueue {
         }
     }
 
+
+
     // GETTERS //
-    public ArrayList<Integer> getKeys(){
+    public K getKeyByIndex(int index){
+        return keys.get(index);
+    }
+    public V getValueByIndex(int index){
+        return values.get(index);
+    }
+    public ArrayList<K> getKeys(){
         return keys;
     }
-    public ArrayList<Float> getValues(){
+    public ArrayList<V> getValues(){
         return values;
+    }
+    public int getSize(){
+        return size;
     }
 }

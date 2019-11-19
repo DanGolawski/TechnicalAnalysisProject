@@ -10,9 +10,9 @@ window.onload = function () {
 
     getPrices('leastSquareHigh');
 
-    // getPrices('leastSquareLow');
+    getPrices('leastSquareLow');
 
-    // getPrices('lowestPrices');
+    getPrices('lowestPrices');
 
 
 

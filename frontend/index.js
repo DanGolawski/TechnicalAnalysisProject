@@ -2,9 +2,7 @@ window.onload = function () {
 
     let dataSets = []
 
-    // getSupportResistanceLevels('resistance');
 
-    // getSupportResistanceLevels('support')
 
     getPrices('highestPrices');
 
@@ -14,11 +12,15 @@ window.onload = function () {
 
     getPrices('lowestPrices');
 
+    getSupportResistanceLevels('resistance');
+
+    getSupportResistanceLevels('support')
+
 
 
 
     function getSupportResistanceLevels(endpoint) {
-        fetch(`http://localhost:8080/${endpoint}`, { mode: "no-cors" }).then(resp => resp.json()).then(resp => {
+        fetch(`http://localhost:8080/${endpoint}`).then(resp => resp.json()).then(resp => {
             // var dataPoints = [];
 
             for (var i = 0; i < resp.length; i += 1) {
@@ -29,6 +31,7 @@ window.onload = function () {
                         y: resp[i]
                     });
                 }
+                console.log(dataPoints);
                 dataSets.push({ type: "line", dataPoints: dataPoints });
                 // drawChart(dataSets);
 
@@ -53,7 +56,7 @@ window.onload = function () {
             }
 
             dataSets.push({ type: "line", dataPoints: dataPoints });
-            console.log(dataSets)
+            // console.log(dataSets)
             drawChart(dataSets);
 
         })

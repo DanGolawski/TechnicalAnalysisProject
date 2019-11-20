@@ -2,15 +2,16 @@ package com.technicalanalysis.backend.controllers;
 
 import com.technicalanalysis.backend.chartServices.LeastSquareService;
 import com.technicalanalysis.backend.chartServices.PricesService;
-import com.technicalanalysis.backend.chartServices.ResistanceLevelsService;
+import com.technicalanalysis.backend.chartServices.SupportResistanceLevelsService;
 import com.technicalanalysis.backend.models.MarketDay;
 import com.technicalanalysis.backend.models.XYobject;
 import com.technicalanalysis.backend.chartServices.MarketDataService;
-import com.technicalanalysis.backend.services.LeastSquaresCalculator;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.TreeSet;
 
 @RestController
 public class ChartController {
@@ -26,7 +27,15 @@ public class ChartController {
     // the list of lowest prices per day
     private ArrayList<XYobject> lowestPrices;
     // the list of least squares of highest prices
-    private ArrayList<Float> leastSquaresOfHighestPrices;
+    private ArrayList<XYobject> leastSquaresOfHighestPrices;
+    // the list of least squares of lowest prices
+    private ArrayList<XYobject> leastSquaresOfLowestPrices;
+    // the service that handles method to find support and resistance levels
+    private SupportResistanceLevelsService supportResistanceLevelsService;
+    // the set consist of resistance levels (without duplicates)
+    private Set<Float> resistanceLevels = new TreeSet<>();
+    // the set consist of support levels (without duplicates)
+    private Set<Float> supportLevels = new TreeSet<>();
 
     /**
      * object initialization, getting and extracting data
@@ -36,16 +45,20 @@ public class ChartController {
         marketDaysArray = marketDataService.getHistoricalData();
         pricesService = new PricesService(marketDaysArray);
         leastSquareService = new LeastSquareService();
-        highestPrices = new ArrayList<>();
-        lowestPrices = new ArrayList<>();
-        leastSquaresOfHighestPrices = new ArrayList<>();
+        supportResistanceLevelsService = new SupportResistanceLevelsService();
         getAllTheData();
     }
 
+    /**
+     * this method starts calculating several data to display in frontend
+     */
     private void getAllTheData(){
         highestPrices = pricesService.getHighestPrices();
         lowestPrices = pricesService.getLowestPrices();
-        leastSquaresOfHighestPrices =
+        leastSquaresOfHighestPrices = leastSquareService.getLeastSquares(leastSquareService.getLeastSquares(leastSquareService.getLeastSquares(highestPrices,30),90),30);
+        leastSquaresOfLowestPrices = leastSquareService.getLeastSquares(leastSquareService.getLeastSquares(leastSquareService.getLeastSquares(lowestPrices,30),90),30);
+        resistanceLevels = supportResistanceLevelsService.getResistanceLevels(highestPrices, leastSquaresOfHighestPrices);
+        supportLevels = supportResistanceLevelsService.getSupportLevels(lowestPrices, leastSquaresOfLowestPrices);
     }
 
     /**
@@ -72,8 +85,8 @@ public class ChartController {
      * @return the array of squared values
      */
     @RequestMapping(value = "/leastSquareHigh")
-    private ArrayList<XYobject> getPeaks(){
-        return leastSquareService.getLeastSquares(leastSquareService.getLeastSquares(leastSquareService.getLeastSquares(highestPrices,30),60),60);
+    private ArrayList<XYobject> getSquaredHighestPrices(){
+        return leastSquaresOfHighestPrices;
     }
 
     /**
@@ -81,99 +94,26 @@ public class ChartController {
      * @return the array of squared values
      */
     @RequestMapping(value = "/leastSquareLow")
-    public ArrayList<XYobject> getHoles(){
-        return leastSquareService.getLeastSquares(leastSquareService.getLeastSquares(leastSquareService.getLeastSquares(lowestPrices,30),60),60);
+    public ArrayList<XYobject> getSquaredLowestPrices(){
+        return leastSquaresOfLowestPrices;
     }
-
-
-    @RequestMapping(value = "/resistance")
-    public ArrayList<Float> getResistanceLevels() {
-        ResistanceLevelsService resistanceLevelsService = new ResistanceLevelsService();
-        // TODO niekompatybilne typy float i XYobject
-        resistanceLevelsService.getLevels(highestPrices, );
-    }
-
-
-
 
 
     /**
-     * ta metoda wyznacza poziomy wsparcia i oporu
+     * this method extract peaks that appoint resistance levels
+     * @return set of unique resistance levels
      */
-//    @RequestMapping(value = "/resistance")
-//    public ArrayList<Float> getResistanceLevels(){
-//        ResistanceLevelsService resistanceLevelsService = new ResistanceLevelsService();
-//        resistanceLevelsService.getLevels();
-//        // lista na podstawie wykresu najmniejszych kwadratow
-//        ArrayList<XYobject> squares = getPeaks();
-//        // lista punktow poziomu oporu
-//        ArrayList<Float> peaks = new ArrayList<>();
-//        // lista najwyzszych cen per dzien
-//        ArrayList<XYobject> prices = getHighestPrices();
-//        // lista szczytow na wykresie cen
-//        ArrayList<Float> peaksPrices = new ArrayList<>();
-//        // filtruje punkty ktore sa pikami wykresu najmniejszych kwadratow
-//
-//        for(int i=3; i<squares.size()-3; i++){
-//            // POZIOMY OPORU
-//            if(squares.get(i-3).getY() < squares.get(i-2).getY() && squares.get(i-2).getY() < squares.get(i-1).getY() && squares.get(i-1).getY() < squares.get(i).getY() && squares.get(i).getY() > squares.get(i+1).getY() && squares.get(i+1).getY() > squares.get(i+2).getY() && squares.get(i+2).getY() > squares.get(i+3).getY()){
-////                peaks.add(squares.get(i-1).getY());
-//                float x = 0;
-//                if(i >= 40) {
-//                    for (int j = -40; j < 40; j++) {
-//                        if (prices.get(i + j).getY() > x) {
-//                            x = prices.get(i + j).getY();
-//                        }
-//                    }
-//                }
-//                System.out.println(squares.get(i-3).getY() + "   " + squares.get(i-2).getY() + "   " + squares.get(i-1).getY() + "   --- " + squares.get(i).getY() + " ---   " + squares.get(i+1).getY() + "   " + squares.get(i+2).getY() + "   " + squares.get(i+3).getY() + "____________________" + x);
-//                peaks.add(x);
-//            }
-////
-//        }
+    @RequestMapping(value = "/resistance")
+    public Set<Float> getResistanceLevels() {
+        return resistanceLevels;
+    }
 
-
-//        return peaks;
-//    }
-
-
-//    @RequestMapping(value = "/support")
-//    public ArrayList<Float> getSupportLevels(){
-//        // lista na podstawie wykresu najmniejszych kwadratow
-//        ArrayList<XYobject> squares = getHoles();
-//        // lista punktow poziomu wsparcia
-//        ArrayList<Float> peaks = new ArrayList<>();
-//        // lista najnizszych cen per dzien
-//        ArrayList<XYobject> prices = getLowestPrices();
-//        // lista szczytow na wykresie cen
-//        ArrayList<Float> peaksPrices = new ArrayList<>();
-//        // filtruje punkty ktore sa pikami wykresu najmniejszych kwadratow
-//
-//        for(int i=3; i<squares.size()-3; i++){
-////            // POZIOMY WSPARCIA
-//            if(squares.get(i-3).getY() > squares.get(i-2).getY() && squares.get(i-2).getY() > squares.get(i-1).getY() && squares.get(i-1).getY() > squares.get(i).getY() && squares.get(i).getY() < squares.get(i+1).getY() && squares.get(i+1).getY() < squares.get(i+2).getY() && squares.get(i+2).getY() < squares.get(i+3).getY()){
-////                peaks.add(squares.get(i-1).getY());
-//                float x = prices.get(i).getY();
-//                if(i >= 10){
-//                    for(int j=-10; j<10; j++){
-//                        if(prices.get(i+j).getY() < x){
-//                            x = prices.get(i+j).getY();
-//                        }
-//                    }
-////                    System.out.println(squares.get(i-3).getY() + "   " + squares.get(i-2).getY() + "   " + squares.get(i-1).getY() + "   --- " + squares.get(i).getY() + " ---   " + squares.get(i+1).getY() + "   " + squares.get(i+2).getY() + "   " + squares.get(i+3).getY() + "____________________" + x);
-////                    peaks.add(x);
-//                }
-//
-//            }
-//
-//        }
-//
-//
-//        return peaks;
-//    }
-//
-
-
-
-
+    /**
+     * this method extract holes that appoint support levels
+     * @return set of unique support levels
+     */
+    @RequestMapping(value = "/support")
+    public Set<Float> getSupportLevels() {
+        return supportLevels;
+    }
 }

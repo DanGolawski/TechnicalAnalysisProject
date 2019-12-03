@@ -22,7 +22,7 @@ public class SupportResistanceLevelsService {
      * @return short list of resistance levels
      */
     public Set<Float> getResistanceLevels(ArrayList<XYobject> prices, ArrayList<XYobject> squares){
-        FifoQueue<Float, Float> fifo = new FifoQueue<>(neighboursNo);
+        FifoQueue<Float, Float> fifo = new FifoQueue<>(neighboursNo+1);
         Set<Float> extremes = new TreeSet<>();
         for(int i=0; i<squares.size(); i++){
             fifo.addElement(prices.get(i).getY(), squares.get(i).getY());
@@ -42,7 +42,7 @@ public class SupportResistanceLevelsService {
      * @return short list of support levels
      */
     public Set<Float> getSupportLevels(ArrayList<XYobject> prices, ArrayList<XYobject> squares){
-        FifoQueue<Float, Float> fifo = new FifoQueue<>(neighboursNo);
+        FifoQueue<Float, Float> fifo = new FifoQueue<>(neighboursNo+1);
         Set<Float> extremes = new TreeSet<>();
         for(int i=0; i<squares.size(); i++){
             fifo.addElement(prices.get(i).getY(), squares.get(i).getY());

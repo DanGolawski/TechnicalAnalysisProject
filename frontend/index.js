@@ -4,17 +4,23 @@ window.onload = function () {
 
 
 
-    getPrices('highestPrices');
+    // getPrices('highestPrices');
 
-    getPrices('leastSquareHigh');
+    // getPrices('leastSquareHigh');
 
-    getPrices('leastSquareLow');
+    // getPrices('leastSquareLow');
 
-    getPrices('lowestPrices');
+    // getPrices('lowestPrices');
 
-    getSupportResistanceLevels('resistance');
+    getPrices('SimpleMovingAverage/5');
 
-    getSupportResistanceLevels('support')
+    getPrices('WeightedMovingAverage/5');
+
+    getPrices('ExponentialMovingAverage/5');
+
+    // getSupportResistanceLevels('resistance');
+
+    // getSupportResistanceLevels('support');
 
 
 

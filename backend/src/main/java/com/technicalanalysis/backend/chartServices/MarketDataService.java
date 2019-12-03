@@ -25,7 +25,6 @@ public class MarketDataService {
 
     private HttpEntity httpEntity;
     private HttpResponse httpResponse;
-//    private JSONObject result;
     private String stringObject;
     private HttpClient httpClient;
     private HttpGet httpGet;
@@ -52,7 +51,6 @@ public class MarketDataService {
             httpEntity = httpResponse.getEntity();
             // Read the contents of an entity and return it as a String.
             stringObject = EntityUtils.toString(httpEntity);
-//            result = new JSONObject(stringObject);
             marketDayArray = convertJsonArrayToArray(new JSONObject(stringObject).getJSONObject("Data").getJSONArray("Data"));
 
         } catch (IOException e) {

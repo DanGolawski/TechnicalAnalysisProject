@@ -1,7 +1,6 @@
 package com.technicalanalysis.backend.chartServices;
 
 
-import com.technicalanalysis.backend.models.MarketDay;
 import com.technicalanalysis.backend.models.XYobject;
 import com.technicalanalysis.backend.services.FifoQueue;
 import com.technicalanalysis.backend.services.LeastSquaresCalculator;
@@ -16,9 +15,15 @@ public class LeastSquareService {
         leastSquaresCalculator = new LeastSquaresCalculator();
     }
 
+    /**
+     * metoda wylicza linie metoda najmniejszych kwadratow
+     * @param chartPoints
+     * @param neighbourNumber
+     * @return
+     */
     public ArrayList<XYobject> getLeastSquares(ArrayList<XYobject> chartPoints, int neighbourNumber){
         int k = neighbourNumber / 2;
-        FifoQueue<Integer, Float> fifo = new FifoQueue<>(neighbourNumber);
+        FifoQueue<Integer, Float> fifo = new FifoQueue<>(neighbourNumber + 1);
         ArrayList<XYobject> squaredPoints = new ArrayList<>();
         for(int i=0; i<chartPoints.size(); i++){
             fifo.addElement(i, chartPoints.get(i).getY());
@@ -32,28 +37,6 @@ public class LeastSquareService {
         return squaredPoints;
     }
 
-    /**
-     * metoda wylicza linie metoda najmniejszych kwadratow
-     * @param objectArray
-     * @return
-     */
-//    public ArrayList<XYobject> calculateLeastSquares(ArrayList<XYobject> objectArray){
-//        LeastSquaresCalculator leastSquaresCalculator = new LeastSquaresCalculator();
-//        ArrayList<XYobject> array = new ArrayList<>();
-//        int k = 30;
-//        for(int i=0; i<k; i++){
-//            array.add(objectArray.get(i));
-//        }
-//        for(int i=k; i<objectArray.size()-k; i++){
-//            ArrayList<Integer> x = new ArrayList<>();
-//            ArrayList<Float> y = new ArrayList<>();
-//            for(int j=0; j<k*2+1; j++){
-//                x.add(i-k+j);
-//                y.add(objectArray.get(i-k+j).getY());
-//            }
-//            array.add(new XYobject("Data XX", leastSquaresCalculator.calculate(x, y)));
-//        }
-//
-//        return array;
-//    }
+
+
 }

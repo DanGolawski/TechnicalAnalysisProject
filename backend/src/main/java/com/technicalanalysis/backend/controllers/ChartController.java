@@ -1,11 +1,10 @@
 package com.technicalanalysis.backend.controllers;
 
-import com.technicalanalysis.backend.chartServices.LeastSquareService;
-import com.technicalanalysis.backend.chartServices.PricesService;
-import com.technicalanalysis.backend.chartServices.SupportResistanceLevelsService;
+import com.technicalanalysis.backend.chartServices.*;
 import com.technicalanalysis.backend.models.MarketDay;
 import com.technicalanalysis.backend.models.XYobject;
-import com.technicalanalysis.backend.chartServices.MarketDataService;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,6 +14,8 @@ import java.util.TreeSet;
 
 @RestController
 public class ChartController {
+
+    // TODO sprawdzic, czy nie da sie zastapic list wywolaniem price service
 
     private MarketDataService marketDataService;
     // the service that gets highest and lowest prices
@@ -33,9 +34,13 @@ public class ChartController {
     // the service that handles method to find support and resistance levels
     private SupportResistanceLevelsService supportResistanceLevelsService;
     // the set consist of resistance levels (without duplicates)
-    private Set<Float> resistanceLevels = new TreeSet<>();
+    private Set<Float> resistanceLevels;
     // the set consist of support levels (without duplicates)
-    private Set<Float> supportLevels = new TreeSet<>();
+    private Set<Float> supportLevels;
+    // the array of close prices
+    private ArrayList<XYobject> closePrices;
+    // The service that calculates moving average
+    private MovingAverageService movingAverageService;
 
     /**
      * object initialization, getting and extracting data
@@ -46,6 +51,7 @@ public class ChartController {
         pricesService = new PricesService(marketDaysArray);
         leastSquareService = new LeastSquareService();
         supportResistanceLevelsService = new SupportResistanceLevelsService();
+        movingAverageService = new MovingAverageService();
         getAllTheData();
     }
 
@@ -59,6 +65,7 @@ public class ChartController {
         leastSquaresOfLowestPrices = leastSquareService.getLeastSquares(leastSquareService.getLeastSquares(leastSquareService.getLeastSquares(lowestPrices,30),90),30);
         resistanceLevels = supportResistanceLevelsService.getResistanceLevels(highestPrices, leastSquaresOfHighestPrices);
         supportLevels = supportResistanceLevelsService.getSupportLevels(lowestPrices, leastSquaresOfLowestPrices);
+        closePrices = pricesService.getClosePrices();
     }
 
     /**
@@ -94,7 +101,7 @@ public class ChartController {
      * @return the array of squared values
      */
     @RequestMapping(value = "/leastSquareLow")
-    public ArrayList<XYobject> getSquaredLowestPrices(){
+    private ArrayList<XYobject> getSquaredLowestPrices(){
         return leastSquaresOfLowestPrices;
     }
 
@@ -104,7 +111,7 @@ public class ChartController {
      * @return set of unique resistance levels
      */
     @RequestMapping(value = "/resistance")
-    public Set<Float> getResistanceLevels() {
+    private Set<Float> getResistanceLevels() {
         return resistanceLevels;
     }
 
@@ -113,7 +120,28 @@ public class ChartController {
      * @return set of unique support levels
      */
     @RequestMapping(value = "/support")
-    public Set<Float> getSupportLevels() {
+    private Set<Float> getSupportLevels() {
         return supportLevels;
     }
+
+    @RequestMapping(value = "/SimpleMovingAverage/{period}")
+    private ArrayList<XYobject> getPricesCalculatedBySimpleMovingAverage(@PathVariable("period") int period) {
+        return movingAverageService.getPricesCalculatedBySimpleMovingAverage(closePrices, period);
+    }
+
+    @RequestMapping(value = "/WeightedMovingAverage/{period}")
+    private ArrayList<XYobject> getPricesCalculatedByWeightedMovingAverage(@PathVariable("period") int period) {
+        return movingAverageService.getPricesCalculatedByWeightedMovingAverage(closePrices, period);
+    }
+
+    @RequestMapping(value = "/ExponentialMovingAverage/{period}")
+    private ArrayList<XYobject> getPricesCalculatedByExponentialMovingAverage(@PathVariable("period") int period) {
+        return movingAverageService.getPricesCalculatedByExponentialMovingAverage(closePrices, period);
+    }
+
+    // TODO Napisać algorytm wykładniczej średniej kroczącej
+    // TODO napisać testy
+//    private void makeRatingBasedOnPredictors(){
+//
+//    }
 }

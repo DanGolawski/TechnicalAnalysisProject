@@ -20,7 +20,7 @@ public class FifoQueue<K, V> {
     }
 
     public void addElement(K x, V y){
-        if(keys.size() < size+1){
+        if(keys.size() < size){
             keys.add(x);
             values.add(y);
         }

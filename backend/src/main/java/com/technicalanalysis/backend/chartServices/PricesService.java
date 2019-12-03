@@ -14,11 +14,13 @@ public class PricesService {
     private ArrayList<XYobject> highestPricesArray;
     private ArrayList<XYobject> lowestPricesArray;
     private ServerDateFormatter serverDateFormatter;
+    private ArrayList<XYobject> closePrices;
 
     public PricesService(ArrayList<MarketDay> marketDaysArray){
         highestPricesArray = new ArrayList<>();
         lowestPricesArray = new ArrayList<>();
         serverDateFormatter = new ServerDateFormatter();
+        closePrices = new ArrayList<>();
         extractData(marketDaysArray);
     }
 
@@ -29,6 +31,7 @@ public class PricesService {
             day = marketDay.getTime();
             highestPricesArray.add(new XYobject(serverDateFormatter.formatServerDateToSimpleDate(day), marketDay.getHigh()));
             lowestPricesArray.add(new XYobject(serverDateFormatter.formatServerDateToSimpleDate(day), marketDay.getLow()));
+            closePrices.add(new XYobject(serverDateFormatter.formatServerDateToSimpleDate(day), marketDay.getClose()));
         }
     }
 
@@ -42,5 +45,7 @@ public class PricesService {
     public ArrayList<XYobject> getLowestPrices(){
         return lowestPricesArray;
     }
+
+    public ArrayList<XYobject> getClosePrices(){ return closePrices; }
 
 }

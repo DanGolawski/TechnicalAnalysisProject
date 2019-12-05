@@ -32,22 +32,32 @@ public class FifoQueue<K, V> {
         }
     }
 
-
-
     // GETTERS //
     public K getKeyByIndex(int index){
         return keys.get(index);
     }
+
     public V getValueByIndex(int index){
         return values.get(index);
     }
+
     public ArrayList<K> getKeys(){
         return keys;
     }
+
     public ArrayList<V> getValues(){
         return values;
     }
+
     public int getSize(){
         return size;
+    }
+
+    public FifoQueue<K, V> getLastElements(int numberOfValues){
+        FifoQueue<K, V> lastValues = new FifoQueue<>(numberOfValues);
+        for(int i = numberOfValues; i < values.size(); i++) {
+            lastValues.addElement(keys.get(i), values.get(i));
+        }
+        return lastValues;
     }
 }

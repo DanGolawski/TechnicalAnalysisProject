@@ -12,9 +12,9 @@ window.onload = function () {
 
     // getPrices('lowestPrices');
 
-    getPrices('SimpleMovingAverage/5');
+    // getPrices('SimpleMovingAverage/5');
 
-    getPrices('WeightedMovingAverage/5');
+    // getPrices('WeightedMovingAverage/5');
 
     getPrices('ExponentialMovingAverage/5');
 

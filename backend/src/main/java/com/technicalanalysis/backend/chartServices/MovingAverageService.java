@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class MovingAverageService {
 
-    public ArrayList<XYobject> getPricesCalculatedBySimpleMovingAverage(ArrayList<XYobject> closePrices, int period) {
+    public ArrayList<XYobject> getArrayOfPricesCalculatedBySimpleMovingAverage(ArrayList<XYobject> closePrices, int period) {
         ArrayList<XYobject> calculatedAverages = new ArrayList<>();
         FifoQueue<Integer, Float> fifo = new FifoQueue<>(period);
         for(int i = 0; i < closePrices.size(); i++) {
@@ -23,7 +23,7 @@ public class MovingAverageService {
         return calculatedAverages;
     }
 
-    public ArrayList<XYobject> getPricesCalculatedByWeightedMovingAverage(ArrayList<XYobject> closePrices, int period) {
+    public ArrayList<XYobject> getArrayOfPricesCalculatedByWeightedMovingAverage(ArrayList<XYobject> closePrices, int period) {
         ArrayList<XYobject> calculatedAverages = new ArrayList<>();
         FifoQueue<Integer, Float> fifo = new FifoQueue<>(period);
         for(int i = 0; i < closePrices.size(); i++) {
@@ -38,7 +38,7 @@ public class MovingAverageService {
         return calculatedAverages;
     }
 
-    public ArrayList<XYobject> getPricesCalculatedByExponentialMovingAverage(ArrayList<XYobject> closePrices, int period) {
+    public ArrayList<XYobject> getArrayOfPricesCalculatedByExponentialMovingAverage(ArrayList<XYobject> closePrices, int period) {
         ArrayList<XYobject> calculatedAverages = new ArrayList<>();
         FifoQueue<Integer, Float> fifo = new FifoQueue<>(period);
         for(int i = 0; i < closePrices.size(); i++) {
@@ -47,6 +47,21 @@ public class MovingAverageService {
                 calculatedAverages.add(new XYobject(closePrices.get(i).getX(), calculateExponentialAverage(fifo)));
             }
             else {
+                calculatedAverages.add(new XYobject(closePrices.get(i).getX(), 0));
+            }
+        }
+        return calculatedAverages;
+    }
+
+    public ArrayList<XYobject> getArrayOfPricesCalculatedByHullMovingAverage(ArrayList<XYobject> closePrices, int period) {
+        ArrayList<XYobject> calculatedAverages = new ArrayList<>();
+        FifoQueue<Integer, Float> fifo = new FifoQueue<>(period);
+        for(int i = 0; i < closePrices.size(); i++){
+            fifo.addElement(i, closePrices.get(i).getY());
+            if(i >= period){
+                calculatedAverages.add(new XYobject(closePrices.get(i).getX(), calculateHullMovingAverage(fifo)));
+            }
+            else{
                 calculatedAverages.add(new XYobject(closePrices.get(i).getX(), 0));
             }
         }
@@ -74,15 +89,31 @@ public class MovingAverageService {
     }
 
     private float calculateExponentialAverage(FifoQueue<Integer, Float> fifo) {
-        float numerator = 0;
-        float denominator = 0;
-        float coefficient;
-        for(int i = 0; i < fifo.getSize(); i++) {
-            coefficient = 2 / (float)i+1;
-            numerator += Math.pow((1 - coefficient), i) * fifo.getValueByIndex(i);
-            denominator += Math.pow((1 - coefficient), i);
+        float initialEMA = calculateSimpleAverage(fifo);
+        boolean initialCalculation = true;
+        float smoothingConstant = 2 / (float)(fifo.getSize() + 1);
+        float calculatedEMA = 0;
+        for(float value : fifo.getValues()){
+            if(!initialCalculation){
+                calculatedEMA = (value - calculatedEMA) * smoothingConstant + calculatedEMA;
+            }
+            else{
+                initialCalculation = false;
+                calculatedEMA = (value - initialEMA) * smoothingConstant + initialEMA;
+            }
         }
-
-        return numerator / denominator;
+        return calculatedEMA;
     }
+
+    private float calculateHullMovingAverage(FifoQueue<Integer, Float> fifo) {
+        // calculation the WMA of the period
+        float WMAofThePeriod = calculateWeightedAverage(fifo);
+        // calculation the WMA of half of the period
+        int halfPeriod = fifo.getSize() / 2;
+        float WMAofHalfOfThePeriod = calculateWeightedAverage(fifo.getLastElements(halfPeriod));
+        // https://www.incrediblecharts.com/indicators/hull-moving-average.php
+        // multiplying the second WMA by 2 and subtraction the first WMA
+    }
+
+
 }

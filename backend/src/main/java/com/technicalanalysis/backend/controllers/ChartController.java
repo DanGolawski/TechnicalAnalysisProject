@@ -3,14 +3,12 @@ package com.technicalanalysis.backend.controllers;
 import com.technicalanalysis.backend.chartServices.*;
 import com.technicalanalysis.backend.models.MarketDay;
 import com.technicalanalysis.backend.models.XYobject;
-import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.Set;
-import java.util.TreeSet;
 
 @RestController
 public class ChartController {
@@ -125,21 +123,27 @@ public class ChartController {
     }
 
     @RequestMapping(value = "/SimpleMovingAverage/{period}")
-    private ArrayList<XYobject> getPricesCalculatedBySimpleMovingAverage(@PathVariable("period") int period) {
-        return movingAverageService.getPricesCalculatedBySimpleMovingAverage(closePrices, period);
+    private ArrayList<XYobject> getArrayOfPricesCalculatedBySimpleMovingAverage(@PathVariable("period") int period) {
+        return movingAverageService.getArrayOfPricesCalculatedBySimpleMovingAverage(closePrices, period);
     }
 
     @RequestMapping(value = "/WeightedMovingAverage/{period}")
-    private ArrayList<XYobject> getPricesCalculatedByWeightedMovingAverage(@PathVariable("period") int period) {
-        return movingAverageService.getPricesCalculatedByWeightedMovingAverage(closePrices, period);
+    private ArrayList<XYobject> getArrayOfPricesCalculatedByWeightedMovingAverage(@PathVariable("period") int period) {
+        return movingAverageService.getArrayOfPricesCalculatedByWeightedMovingAverage(closePrices, period);
     }
 
     @RequestMapping(value = "/ExponentialMovingAverage/{period}")
-    private ArrayList<XYobject> getPricesCalculatedByExponentialMovingAverage(@PathVariable("period") int period) {
-        return movingAverageService.getPricesCalculatedByExponentialMovingAverage(closePrices, period);
+    private ArrayList<XYobject> getArrayOfPricesCalculatedByExponentialMovingAverage(@PathVariable("period") int period) {
+        return movingAverageService.getArrayOfPricesCalculatedByExponentialMovingAverage(closePrices, period);
     }
 
-    // TODO Napisać algorytm wykładniczej średniej kroczącej
+    @RequestMapping(value = "/HullMovingAverage/{period}")
+    private ArrayList<XYobject> getArrayOfPricesCalculatedByHullMovingAverage(@PathVariable("period") int period){
+        return movingAverageService.getArrayOfPricesCalculatedByHullMovingAverage(closePrices, period);
+    }
+
+
+    // TODO zaimplementować algorytm ratingowy
     // TODO napisać testy
 //    private void makeRatingBasedOnPredictors(){
 //

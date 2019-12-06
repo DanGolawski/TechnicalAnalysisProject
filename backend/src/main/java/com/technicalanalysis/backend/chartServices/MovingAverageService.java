@@ -59,7 +59,10 @@ public class MovingAverageService {
         for(int i = 0; i < closePrices.size(); i++){
             fifo.addElement(i, closePrices.get(i).getY());
             if(i >= period){
-                calculatedAverages.add(new XYobject(closePrices.get(i).getX(), calculateHullMovingAverage(fifo)));
+//                calculatedAverages.add(new XYobject(closePrices.get(i).getX(), calculateHullMovingAverage(fifo)));
+                float n1 = calculateWeightedAverage(fifo);
+                float n2 = calculateWeightedAverage(fifo.getLastElements(fifo.getSize()/2));
+                // https://www.financialwisdomforum.org/gummy-stuff/MA-stuff.htm
             }
             else{
                 calculatedAverages.add(new XYobject(closePrices.get(i).getX(), 0));
@@ -106,13 +109,17 @@ public class MovingAverageService {
     }
 
     private float calculateHullMovingAverage(FifoQueue<Integer, Float> fifo) {
-        // calculation the WMA of the period
+        // calculation of the WMA of the period
         float WMAofThePeriod = calculateWeightedAverage(fifo);
-        // calculation the WMA of half of the period
+        // calculation of the WMA of half of the period
         int halfPeriod = fifo.getSize() / 2;
         float WMAofHalfOfThePeriod = calculateWeightedAverage(fifo.getLastElements(halfPeriod));
         // https://www.incrediblecharts.com/indicators/hull-moving-average.php
         // multiplying the second WMA by 2 and subtraction the first WMA
+        float calculatedWMA = WMAofHalfOfThePeriod * 2 - WMAofThePeriod;
+        int squareRootOfPeriod = (int) Math.sqrt(fifo.getSize());
+        // calculation of third WMA
+        float thirdWMA =
     }
 
 

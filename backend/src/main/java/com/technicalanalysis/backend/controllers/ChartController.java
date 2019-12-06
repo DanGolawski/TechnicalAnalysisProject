@@ -2,12 +2,12 @@ package com.technicalanalysis.backend.controllers;
 
 import com.technicalanalysis.backend.chartServices.*;
 import com.technicalanalysis.backend.models.MarketDay;
+import com.technicalanalysis.backend.models.Rating;
 import com.technicalanalysis.backend.models.XYobject;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -145,7 +145,16 @@ public class ChartController {
 
     // TODO zaimplementować algorytm ratingowy
     // TODO napisać testy
-//    private void makeRatingBasedOnPredictors(){
-//
-//    }
+
+    @RequestMapping(value = "/rating/periods")
+    @ResponseBody
+    public Rating makeRatingBasedOnPredictors(@RequestParam List<Integer> period, @RequestParam int hullperiod) {
+        //return "IDs are " + id;
+//        period.forEach(x -> {
+//            System.out.println("---------------------------" + x);
+//        });
+//        System.out.println("================" + hullperiod);
+        RatingService ratingService = new RatingService();
+        return ratingService.rate(period, hullperiod, closePrices);
+    }
 }

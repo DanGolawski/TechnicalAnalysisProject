@@ -6,17 +6,19 @@ window.onload = function () {
 
     // getPrices('highestPrices');
 
+    // getPrices('lowestPrices');
+
     // getPrices('leastSquareHigh');
 
     // getPrices('leastSquareLow');
-
-    // getPrices('lowestPrices');
 
     // getPrices('SimpleMovingAverage/5');
 
     // getPrices('WeightedMovingAverage/5');
 
-    getPrices('ExponentialMovingAverage/5');
+    // getPrices('ExponentialMovingAverage/5');
+
+    getPrices('HullMovingAverage/9');
 
     // getSupportResistanceLevels('resistance');
 

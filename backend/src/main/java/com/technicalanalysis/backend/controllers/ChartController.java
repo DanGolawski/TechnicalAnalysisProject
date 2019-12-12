@@ -70,7 +70,7 @@ public class ChartController {
      * This method returns the highest prices per the day
      * @return array of objects X-date, Y-price
      */
-    @RequestMapping(value = "/highestPrices")
+    @GetMapping(value = "/highestPrices")
     private ArrayList<XYobject> getHighestPrices(){
         return highestPrices;
     }
@@ -79,7 +79,7 @@ public class ChartController {
      * This method returns the lowest prices per the day
      * @return array of objects X-date, Y-price
      */
-    @RequestMapping(value = "/lowestPrices")
+    @GetMapping(value = "/lowestPrices")
     private ArrayList<XYobject> getLowestPrices(){
         return lowestPrices;
     }
@@ -89,7 +89,7 @@ public class ChartController {
      * this method calculates least squares of the highest prices values (3 times to eliminate undesirable peaks)
      * @return the array of squared values
      */
-    @RequestMapping(value = "/leastSquareHigh")
+    @GetMapping(value = "/leastSquareHigh")
     private ArrayList<XYobject> getSquaredHighestPrices(){
         return leastSquaresOfHighestPrices;
     }
@@ -98,7 +98,7 @@ public class ChartController {
      * this method calculates least squares of the lowest prices values (3 times to eliminate undesirable holes)
      * @return the array of squared values
      */
-    @RequestMapping(value = "/leastSquareLow")
+    @GetMapping(value = "/leastSquareLow")
     private ArrayList<XYobject> getSquaredLowestPrices(){
         return leastSquaresOfLowestPrices;
     }
@@ -108,7 +108,7 @@ public class ChartController {
      * this method extract peaks that appoint resistance levels
      * @return set of unique resistance levels
      */
-    @RequestMapping(value = "/resistance")
+    @GetMapping(value = "/resistance")
     private Set<Float> getResistanceLevels() {
         return resistanceLevels;
     }
@@ -117,7 +117,7 @@ public class ChartController {
      * this method extract holes that appoint support levels
      * @return set of unique support levels
      */
-    @RequestMapping(value = "/support")
+    @GetMapping(value = "/support")
     private Set<Float> getSupportLevels() {
         return supportLevels;
     }

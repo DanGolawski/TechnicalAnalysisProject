@@ -6,13 +6,13 @@ public class RatingItem {
     private String itemName;
     private int period;
     private float averageValue;
-    private boolean shouldBuy;
+    private String verdict;
 
-    public RatingItem(String itemName, int period, float averageValue, boolean shouldBuy){
+    public RatingItem(String itemName, int period, float averageValue, boolean verdict){
         this.period = period;
         this.averageValue = averageValue;
         this.itemName = itemName + "(" + period + ")";
-        this.shouldBuy = shouldBuy;
+        this.verdict = verdict ? "Buy" : "Sell";
     }
 
 
@@ -31,7 +31,7 @@ public class RatingItem {
         return averageValue;
     }
 
-    public boolean isShouldBuy() {
-        return shouldBuy;
+    public String getVerdict() {
+        return verdict;
     }
 }

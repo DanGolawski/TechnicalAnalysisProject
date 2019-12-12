@@ -16,8 +16,10 @@ public class RatingService {
     }
 
     public Rating rate(List<Integer> periods, int hullperiod, ArrayList<XYobject> closePrices){
-        Rating rating = new Rating(periods, hullperiod, closePrices.get(closePrices.size()-1).getY());
+        // periods, hullPeriod, closePrice
         float todaysClosePrice = closePrices.get(closePrices.size()-1).getY();
+        Rating rating = new Rating(periods, hullperiod, todaysClosePrice);
+        // movingAverages
         periods.forEach(period -> {
             float[] lastPrices = getLastClosePrices(closePrices, period);
             float simpleMovingAverage = movingAverageService.calculateSimpleMovingAverage(lastPrices);
@@ -25,7 +27,10 @@ public class RatingService {
             float exponentialMovingAverage = movingAverageService.calculateExponentialMovingAverage(lastPrices);
             rating.addMovingAverage(new RatingItem("EMA", period, exponentialMovingAverage, todaysClosePrice > exponentialMovingAverage));
         });
-
+        float hullMovingAverage = movingAverageService.getArrayOfPricesCalculatedByHullMovingAverage(closePrices, hullperiod).get(closePrices.size()-1).getY();
+        // hullMovingAverage
+        rating.addMovingAverage(new RatingItem("HMA", hullperiod, hullMovingAverage, todaysClosePrice > hullMovingAverage));
+        rating.makeVerdict();
         return rating;
     }
 

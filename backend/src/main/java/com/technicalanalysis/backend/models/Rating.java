@@ -1,5 +1,6 @@
 package com.technicalanalysis.backend.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Rating {
@@ -7,14 +8,33 @@ public class Rating {
     private List<Integer> periods;
     private int hullPeriod;
     private List<RatingItem> movingAverages;
-    private RatingItem hullMovingAverage;
     private float closePrice;
-    private boolean shouldBuyVerdict;
+    private String shouldBuyVerdict;
 
     public Rating(List<Integer> periods, int hullperiod, float closePrice) {
         this.periods = periods;
         this.hullPeriod = hullperiod;
         this.closePrice = closePrice;
+        movingAverages = new ArrayList<>();
+    }
+
+    public void makeVerdict(){
+        int buyRecomendationCounter = 0;
+        int sellRecomendationCounter = 0;
+        for(RatingItem ratingItem : movingAverages) {
+            if(ratingItem.getVerdict().equals("Buy")){
+                buyRecomendationCounter += 1;
+            }
+            else{
+                sellRecomendationCounter += 1;
+            }
+        }
+        if(buyRecomendationCounter > sellRecomendationCounter) {
+            this.shouldBuyVerdict = "Buy";
+        }
+        else{
+            this.shouldBuyVerdict = "Sell";
+        }
     }
 
     // SETTERS & ADDERS //
@@ -28,18 +48,14 @@ public class Rating {
     }
 
     public void addMovingAverage(RatingItem movingAverage) {
-        movingAverages.add(movingAverage);
-    }
-
-    public void setHullMovingAverage(RatingItem hullMovingAverage) {
-        this.hullMovingAverage = hullMovingAverage;
+        this.movingAverages.add(movingAverage);
     }
 
     public void setClosePrice(float closePrice) {
         this.closePrice = closePrice;
     }
 
-    public void setShouldBuyVerdict(boolean shouldBuyVerdict) {
+    public void setShouldBuyVerdict(String shouldBuyVerdict) {
         this.shouldBuyVerdict = shouldBuyVerdict;
     }
 
@@ -59,15 +75,11 @@ public class Rating {
         return movingAverages;
     }
 
-    public RatingItem getHullMovingAverage() {
-        return hullMovingAverage;
-    }
-
     public float getClosePrice() {
         return closePrice;
     }
 
-    public boolean isShouldBuyVerdict() {
+    public String getShouldBuyVerdict() {
         return shouldBuyVerdict;
     }
 }

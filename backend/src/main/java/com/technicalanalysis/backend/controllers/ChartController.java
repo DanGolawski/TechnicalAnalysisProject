@@ -142,18 +142,9 @@ public class ChartController {
         return movingAverageService.getArrayOfPricesCalculatedByHullMovingAverage(closePrices, period);
     }
 
-
-    // TODO zaimplementować algorytm ratingowy
-    // TODO napisać testy
-
     @RequestMapping(value = "/rating/periods")
     @ResponseBody
     public Rating makeRatingBasedOnPredictors(@RequestParam List<Integer> period, @RequestParam int hullperiod) {
-        //return "IDs are " + id;
-//        period.forEach(x -> {
-//            System.out.println("---------------------------" + x);
-//        });
-//        System.out.println("================" + hullperiod);
         RatingService ratingService = new RatingService();
         return ratingService.rate(period, hullperiod, closePrices);
     }

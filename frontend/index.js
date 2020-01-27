@@ -4,7 +4,7 @@ window.onload = function () {
 
 
 
-    // getPrices('highestPrices');
+    getPrices('highestPrices');
 
     // getPrices('lowestPrices');
 
@@ -12,17 +12,21 @@ window.onload = function () {
 
     // getPrices('leastSquareLow');
 
-    // getPrices('SimpleMovingAverage/5');
+    getPrices('SimpleMovingAverage/5');
+
+    getPrices('SimpleMovingAverage/30');
 
     // getPrices('WeightedMovingAverage/5');
 
     // getPrices('ExponentialMovingAverage/5');
 
-    getPrices('HullMovingAverage/9');
+    // getPrices('HullMovingAverage/9');
 
     // getSupportResistanceLevels('resistance');
 
     // getSupportResistanceLevels('support');
+
+    // getPrices('oscillators');
 
 
 

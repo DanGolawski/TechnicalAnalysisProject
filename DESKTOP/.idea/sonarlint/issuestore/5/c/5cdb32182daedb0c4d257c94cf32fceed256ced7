@@ -1,0 +1,11 @@
+
+`squid:UselessImportCheck	"7Remove this unused import 'java.net.ProtocolException'.(é­Èğûÿÿÿÿ
+jsquid:S00112$"FDefine and throw a dedicated exception instead of using a generic one.(ÖºÀÂıÿÿÿÿ8Ï‹Ÿü-
+csquid:UselessImportCheck"3Remove this unused import 'org.json.JSONException'.(¹Ó·úÿÿÿÿ8Ìä£÷û-
+[squid:UselessImportCheck"0Remove this unused import 'java.util.ArrayList'.(÷‰îƒ8€ğ¸­ú-
+jsquid:S00112"FDefine and throw a dedicated exception instead of using a generic one.(ÖºÀÂıÿÿÿÿ8Î°£÷û-
+esquid:S00112"FDefine and throw a dedicated exception instead of using a generic one.(ê¨ˆ€8Ìä£÷û-
+jsquid:S00112!"FDefine and throw a dedicated exception instead of using a generic one.(ÕĞÓøÿÿÿÿ8Ï‹Ÿü-
+lsquid:UselessImportCheck"CRemove this unused import 'jdk.nashorn.internal.parser.JSONParser'.(©ß÷‰ıÿÿÿÿ
+Vsquid:UselessImportCheck",Remove this unused import 'models.XYobject'.(¶™Î8€ğ¸­ú-
+fsquid:UselessImportCheck";Remove this unused import 'java.net.MalformedURLException'.(ªËŞˆ8´‹«ôû-
